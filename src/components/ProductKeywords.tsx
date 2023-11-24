@@ -1,15 +1,10 @@
-import React, { KeyboardEventHandler } from 'react';
+import React from 'react';
 import CreatableSelect from 'react-select/creatable';
 
 interface Option {
   readonly label: string;
   readonly value: string;
 }
-
-const createOption = (label: string) => ({
-  label,
-  value: label,
-});
 
 interface ProductKeywordsProps {
   keywords: Option[];
@@ -26,22 +21,7 @@ export default function ProductKeywords({
   register,
   name,
 }: ProductKeywordsProps) {
-  const [inputValue, setInputValue] = React.useState('');
-  const [value, setValue] = React.useState<readonly Option[]>([]);
   const Controller = controller;
-
-  const handleKeyDown: KeyboardEventHandler = (event) => {
-    if (!inputValue) return;
-    switch (event.key) {
-      case 'Enter':
-      case 'Tab':
-        setValue((prev) => [...prev, createOption(inputValue)]);
-        setInputValue('');
-        event.preventDefault();
-    }
-  };
-
-  console.log(keywords);
 
   return (
     <Controller
@@ -59,19 +39,13 @@ export default function ProductKeywords({
         <CreatableSelect
           {...register}
           options={keywords}
-          values={keywords.find((keyword: Option) => keyword.value === value)}
-          inputValue={inputValue}
+          value={keywords.find((keyword: Option) => keyword.value === value)}
           onChange={(keywords: Option[]) =>
-            onChange(
-              keywords.map((keyword: Option) => {
-                return keyword;
-              })
-            )
+            onChange(keywords.map((keyword: Option) => keyword.value))
           }
           ref={ref}
-          onKeyDown={handleKeyDown}
+          openMenuOnFocus
           isMulti
-          isSearchable
         />
       )}
     />

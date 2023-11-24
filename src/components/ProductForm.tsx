@@ -2,13 +2,24 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FieldValues, useForm, Controller } from 'react-hook-form';
 import ProductKeywords from './ProductKeywords';
+import { useEffect } from 'react';
 
 export default function ProductForm() {
-  const { register, handleSubmit, control } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    setError,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (data: FieldValues) => {
-    console.log({ data });
+    console.log(data);
   };
+
+  useEffect(() => {
+    setError('title', { type: 'manual' });
+  }, [setError]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -20,8 +31,16 @@ export default function ProductForm() {
         <Form.Control
           type='text'
           placeholder='Add title'
-          {...register('title', { required: true })}
+          {...register('title', { required: 'Title is required' })}
         />
+        {errors && (
+          <Form.Control.Feedback
+            type='invalid'
+            className='d-block'
+          >
+            {errors.title?.message}
+          </Form.Control.Feedback>
+        )}
       </Form.Group>
 
       <Form.Group
