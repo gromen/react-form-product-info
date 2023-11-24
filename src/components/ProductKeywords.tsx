@@ -6,15 +6,13 @@ interface Option {
   readonly value: string;
 }
 
-export type Keywords = { label: string; value: string }[];
-
 const createOption = (label: string) => ({
   label,
   value: label,
 });
 
 interface ProductKeywordsProps {
-  keywords: Keywords;
+  keywords: Option[];
   control: any;
   controller: any;
   register: any;
@@ -31,7 +29,6 @@ export default function ProductKeywords({
   const [inputValue, setInputValue] = React.useState('');
   const [value, setValue] = React.useState<readonly Option[]>([]);
   const Controller = controller;
-  console.log(value);
 
   const handleKeyDown: KeyboardEventHandler = (event) => {
     if (!inputValue) return;
@@ -50,15 +47,28 @@ export default function ProductKeywords({
     <Controller
       name={name}
       control={control}
-      render={({ field: { onChange, value, name, ref } }: any) => (
+      render={({
+        field: { onChange, value, ref },
+      }: {
+        field: {
+          onChange: (event: Option[]) => void;
+          value: string;
+          ref: React.Ref<HTMLSelectElement>;
+        };
+      }) => (
         <CreatableSelect
           {...register}
           options={keywords}
-          value={keywords.find((keyword: Keywords) => keyword.value === value)}
+          values={keywords.find((keyword: Option) => keyword.value === value)}
           inputValue={inputValue}
-          onChange={(event: any) => onChange(event.map((c: any) => c.value))}
+          onChange={(keywords: Option[]) =>
+            onChange(
+              keywords.map((keyword: Option) => {
+                return keyword;
+              })
+            )
+          }
           ref={ref}
-          name={name}
           onKeyDown={handleKeyDown}
           isMulti
           isSearchable
